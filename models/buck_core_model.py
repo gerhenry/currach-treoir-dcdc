@@ -1,0 +1,7 @@
+VIN = 3.3
+VOUT = 1.8
+IOUT = 0.25
+FSW = 1.5e6
+L = 2.2e-6
+RDS_TOP = 0.260
+RDS_BOT = 0.160

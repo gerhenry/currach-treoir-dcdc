@@ -1,6 +1,15 @@
 import csv
 import os
-
+uvlo_threshold = 2.5
+uvlo_hysteresis = 0.150
+soft_start_time_us = 700
+turn_on_delay_us = 300
+thermal_shutdown_c = 160.0
+thermal_hys_c = 20.0
+current_limit_A = 2.5
+hiccup_freq_hz = 300.0
+hiccup_duty = 0.45
+short_detect_v_fraction = 0.5
 # ------------------------------------------------------------
 # Currach Treoir DC-DC
 # Startup / protection behaviour model
