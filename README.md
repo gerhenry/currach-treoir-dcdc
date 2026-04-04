@@ -1,12 +1,12 @@
 ## Functional Block Basis
 
-The DC-DC architecture work is informed by the standard synchronous buck control structure used in devices such as the SY8088A1 class, including:
+The DC-DC architecture work is informed by standard synchronous buck control structures commonly used in integrated power management solutions, including:
 
-- control logic
-- current sense
-- soft start
-- UVLO
-- thermal protection
-- feedback/reference regulation
+- control logic  
+- current sense  
+- soft start  
+- undervoltage lockout (UVLO)  
+- thermal protection  
+- feedback/reference regulation  
 
-This repo uses these functions as architectural concepts only, not as a transistor-level reproduction.
+These functions are included as high-level architectural concepts only, not as a transistor-level or implementation-specific reproduction of any commercial device.
