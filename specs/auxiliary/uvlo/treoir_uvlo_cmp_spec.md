@@ -1,6 +1,36 @@
 # treoir_uvlo_cmp Specification
 
 ## Role
+Analog decision core for Treoir UVLO.
+
+## Inputs
+- vip
+- vim
+- vbias_tail
+- vdd
+- vss
+
+## Output
+- vout
+
+## Topology
+- NMOS differential pair
+- PMOS current mirror load
+- NMOS tail current source
+- single-ended analog output
+
+## First-Pass Operating Point
+- vdd = 1.8 V
+- vip/vim common-mode ≈ 0.6 V
+- tail current target ≈ 2 µA
+
+## Priorities
+- low quiescent current
+- monotonic threshold response
+- sufficient gain near crossing
+- portability to 22nm FDX# treoir_uvlo_cmp Specification
+
+## Role
 Low-power continuous comparator-amplifier for UVLO decision path.
 
 ## Inputs
