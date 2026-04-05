@@ -1,32 +1,47 @@
-* treoir_uvlo_cmp core comparator
-* First-pass analog implementation
+*===========================================================
+* treoir_uvlo_cmp_core.sp
+* GF180 UVLO comparator core
+* FIXED model include + correct device usage
+*===========================================================
 
-* Replace include with the exact GF180 model path once confirmed
-*.include $PDK_ROOT/gf180mcu/models/ngspice/gf180mcu.lib.spice
+.option scale=1u
+
+* 🔴 Use ONLY this model file (this is the key fix)
+.include "/data/data/com.termux/files/home/pdks/gf180mcu-pdk/libraries/gf180mcu_fd_pr/latest/models/ngspice/sm141064.ngspice"
+
+*===========================================================
+* SUPPLIES
+*===========================================================
 
 VDD vdd 0 1.8
 VSS vss 0 0
 
-* Inputs
 VIP vip 0 0.60
 VIM vim 0 0.60
 
-* Tail bias placeholder
 VBIAS vbias_tail 0 0.75
 
-* Differential pair
-M1 n1   vip tail vss nfet_03v3 W=8u  L=0.5u
-M2 vout vim tail vss nfet_03v3 W=8u  L=0.5u
+*===========================================================
+* CORE COMPARATOR
+*===========================================================
 
-* PMOS mirror load
-M3 n1   n1   vdd vdd pfet_03v3 W=16u L=0.5u
-M4 vout n1   vdd vdd pfet_03v3 W=16u L=0.5u
+* NMOS differential pair
+XMN1 n1   vip        tail vss nmos_3p3 W=8u  L=0.5u
+XMN2 vout vim        tail vss nmos_3p3 W=8u  L=0.5u
 
-* Tail current sink
-M5 tail vbias_tail vss vss nfet_03v3 W=4u L=1u
+* PMOS current mirror load
+XMP1 n1   n1         vdd  vdd pmos_3p3 W=16u L=0.5u
+XMP2 vout n1         vdd  vdd pmos_3p3 W=16u L=0.5u
 
-.op
-*.dc VIP 0.50 0.70 0.001
-*.print dc v(vout) v(n1)
+* Tail current source
+XMNTAIL tail vbias_tail vss vss nmos_3p3 W=4u L=1u
+
+.control
+op
+display
+print v(vout) v(n1) v(tail) v(vip) v(vim)
+print i(VDD)
+quit
+.endc
 
 .end
