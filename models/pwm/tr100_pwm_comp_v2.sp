@@ -1,58 +1,45 @@
-* TR100 PWM Comparator V2
-* Standalone comparator using a soft-start-like reference and the golden ramp
+* TR100 PWM COMPARATOR V2 (FIXED)
 
+**************************************************
+* SUPPLY
+**************************************************
 VDD vdd 0 1.8
 
 **************************************************
-* REFERENCE INPUT
+* INPUTS
 **************************************************
-* simple rising reference for standalone validation
-VREF vref_ss 0 PWL(
-+ 0        0
-+ 100n     0
-+ 2u       0.15
-+ 4u       0.30
-+ 6u       0.45
-+ 8u       0.60
-+ 10u      0.60
+VERR verr 0 PWL(
++ 0      0.95
++ 20u    0.95
++ 40u    0.80
++ 60u    0.65
++ 80u    0.50
++ 100u   0.30
 )
 
 **************************************************
-* GOLDEN RAMP
+* RAMP GENERATOR (triangle via PULSE + RC)
 **************************************************
-.param FSW=1Meg
-.param TPER={1/FSW}
-.param CRAMP=100p
-.param IRAMP=100u
+VRAMP_SRC ramp_in 0 PULSE(0 1 0 1n 1n 0.5u 1u)
 
-VCLK clk 0 PULSE(0 1.8 0 1n 1n {TPER/2} {TPER})
-
-BCHG_EN chg_en 0 V = { V(clk)>0.9 ? 1.8 : 0 }
-BRESET_EN rst_en 0 V = { V(clk)<0.9 ? 1.8 : 0 }
-
-CRAMPNODE ramp 0 {CRAMP} IC=0
-RRAMPLEAK ramp 0 10Meg
-
-BCHARGE 0 ramp I = { V(chg_en)>0.9 ? IRAMP : 0 }
-
-.model SWMOD SW(Ron=1 Roff=10Meg Vt=0.9 Vh=0.1)
-SRESET ramp 0 rst_en 0 SWMOD
+RRAMP ramp_in ramp 10k
+CRAMP ramp 0 100p
 
 **************************************************
-* PWM COMPARATOR
+* PWM COMPARATOR (soft)
 **************************************************
-* smooth behavioral comparator
-BPWM_RAW pwm_raw 0 V = { 0.9*(1+tanh((V(vref_ss)-V(ramp))/0.01)) }
+BPWM pwm 0 V = { 0.9*(1+tanh((V(verr)-V(ramp))/0.02)) }
 
-* rail-like output buffer
-BPWM pwm 0 V = { V(pwm_raw) > 0.9 ? 1.8 : 0 }
+**************************************************
+* LOAD
+**************************************************
+RLOAD pwm 0 100k
+CLOAD pwm 0 1p
 
 .control
 set noaskquit
-tran 5n 10u
-wrdata ~/tmp/tr100_pwm_comp_v2.dat v(clk) v(vref_ss) v(ramp) v(pwm_raw) v(pwm)
+tran 10n 100u
+wrdata ~/tmp/tr100_pwm_comp_v2.dat v(verr) v(ramp) v(pwm)
 .endc
-
-.ic V(ramp)=0
 
 .end
